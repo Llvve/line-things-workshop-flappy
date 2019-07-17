@@ -16,7 +16,7 @@
 #define PSDI_SERVICE_UUID "E625601E-9E55-4597-A598-76018A0D293D"
 #define PSDI_CHARACTERISTIC_UUID "26E2B12B-85F0-4F3F-9FDD-91D114270E6E"
 
-#define BUTTON 19
+#define BUTTON 23
 
 #include <Wire.h>
 #include <Adafruit_GFX.h>
@@ -40,34 +40,60 @@ BLECharacteristic* notifyCharacteristic;
 bool deviceConnected = false;
 bool oldDeviceConnected = false;
 
-bool newDraw = true;
+bool showScore = false;
+uint8_t sendScore = 0;
 
 volatile int btnAction = 0;
 
-void drawchar(char score);
-void playingScreen(void);
+void testdraw(void) {
+  display.clearDisplay();
+
+  display.setTextSize(1);      // Normal 1:1 pixel scale
+  display.setTextColor(WHITE); // Draw white text
+  display.setCursor(0, 0);     // Start at top-left corner
+  display.println(F("Welcome to"));
+  display.println(F("LINE Things"));
+  //  display.println(F("Workshop"));
+
+  display.display();
+  delay(2000);
+}
+
+void drawchar(char score) {
+  display.clearDisplay();
+
+  display.setTextSize(1);      // Normal 1:1 pixel scale
+  display.setTextColor(WHITE); // Draw white text
+  display.setCursor(0, 0);     // Start at top-left corner
+  //  display.println(F("Welcome to"));
+  //  display.println(F("wow"));
+  //  display.println(F("Workshop"));
+  //    display.setTextSize(2);      // Bigger Text Size
+  //    display.setTextColor(WHITE); // Draw white text
+  //    display.setCursor(0, 0);     // Start at top-left corner
+  display.print(F("Score: "));  display.println((int)score);
+  display.display();
+  delay(2000);
+}
 
 class serverCallbacks: public BLEServerCallbacks {
-  void onConnect(BLEServer* pServer) {
-   deviceConnected = true;
-  };
+    void onConnect(BLEServer* pServer) {
+      deviceConnected = true;
+    };
 
-  void onDisconnect(BLEServer* pServer) {
-    deviceConnected = false;
-  }
+    void onDisconnect(BLEServer* pServer) {
+      deviceConnected = false;
+    }
 };
 
 class writeCallback: public BLECharacteristicCallbacks {
-  void onWrite(BLECharacteristic *bleWriteCharacteristic) {
-    std::string value = bleWriteCharacteristic->getValue();
-    if ((char)value[0] <= 100) {
-//      digitalWrite(LED1, (char)value[0]);
-        drawchar((char)value[0]);
-    }
-    else if ((char)value[0] == 255){
-        playingScreen();
+    void onWrite(BLECharacteristic *bleWriteCharacteristic) {
+      std::string value = bleWriteCharacteristic->getValue();
+      if ((char)value[0] <= 100) {
+        showScore = true;
+        sendScore = (char)value[0];
       }
-  }
+    }
 };
 
 void setup() {
@@ -87,13 +113,13 @@ void setup() {
 
   setupServices();
   startAdvertising();
-    // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
-  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3C for 128x64
+  // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
+  if (!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) { // Address 0x3C for 128x64
     Serial.println(F("SSD1306 allocation failed"));
-    for(;;); // Don't proceed, loop forever
+    for (;;); // Don't proceed, loop forever
   }
-
   testdraw();
+  delay(2000);
   Serial.println("Ready to Connect");
 }
 
@@ -116,6 +142,11 @@ void loop() {
   // Connection
   if (deviceConnected && !oldDeviceConnected) {
     oldDeviceConnected = deviceConnected;
+  }
+
+  if (showScore) {
+    drawchar(sendScore);
+    showScore = false;
   }
 }
 
@@ -165,39 +196,4 @@ void startAdvertising(void) {
 
 void buttonAction() {
   btnAction++;
-}
-
-void testdraw(void) {
-  display.clearDisplay();
-
-  display.setTextSize(1);      // Normal 1:1 pixel scale
-  display.setTextColor(WHITE); // Draw white text
-  display.setCursor(0, 0);     // Start at top-left corner
-  display.println(F("Welcome to\n"));
-  display.println(F("LINE Things\n"));
-  display.println(F("Workshop"));
-
-  display.display();
-}
-
-void drawchar(char score) {
-    display.clearDisplay();
-    
-    display.setTextSize(2);      // Bigger Text Size
-    display.setTextColor(WHITE); // Draw white text
-    display.setCursor(0, 0);     // Start at top-left corner
-    display.print(F("Score: ")); display.println((int)score);
-    display.display();
-}
-
-void playingScreen(void) {
-  display.clearDisplay();
-
-  display.setTextSize(1);      // Normal 1:1 pixel scale
-  display.setTextColor(WHITE); // Draw white text
-  display.setCursor(0, 0);     // Start at top-left corner
-  display.println(F("\n\n\nGame in"));
-  display.println(F("Progress"));
-
-  display.display();
 }

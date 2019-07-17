@@ -120,7 +120,6 @@ function liffGetButtonStateCharacteristic(characteristic) {
                     switch(state.current){
                         case state.getReady:
                             state.current = state.game;
-                            score.begin();
                             SWOOSHING.play();
                             break;
                         case state.game:
@@ -444,10 +443,6 @@ const score= {
     reset : function(){
         liffWriteScore(0x00+parseInt(this.value));
         this.value = 0;
-    },
-
-    begin : function(){
-        liffWriteScore(0x00+parseInt(255));
     }
 }
 
