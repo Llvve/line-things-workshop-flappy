@@ -16,7 +16,12 @@ const state = {
 
 window.onload = () => {
     console.log("init");
-    document.body.style.zoom = (screen.width/320);
+    var scale = 'scale('+(screen.width/320)+')';
+    
+    document.body.style.webkitTransform =  scale;    // Chrome, Opera, Safari
+    document.body.style.msTransform =   scale;       // IE 9
+    document.body.style.transform = scale;   
+    console.log(scale);
     initializeApp();
 };
 function uiToggleStateButton(pressed) {
