@@ -110,6 +110,7 @@ function liffCheckAvailablityAndDo(callbackIfAvailable) {
 
 function liffRequestDevice() {
     liff.bluetooth.requestDevice().then(device => {
+        console.log("connecting");
         liffConnectToDevice(device);
     }).catch(error => {
         uiStatusError(makeErrorMsg(error), false);
@@ -120,7 +121,7 @@ function liffConnectToDevice(device) {
     device.gatt.connect().then(() => {
         // document.getElementById("device-name").innerText = device.name;
         // document.getElementById("device-id").innerText = device.id;
-
+        console.log("connected to " + device.name)
         // Show status connected
         uiToggleDeviceConnected(true);
 
@@ -278,17 +279,17 @@ cvs.addEventListener("click", function(evt){
             FLAP.play();
             break;
         case state.over:
-            // let rect = cvs.getBoundingClientRect();
-            // let clickX = evt.clientX - rect.left;
-            // let clickY = evt.clientY - rect.top;
+            let rect = cvs.getBoundingClientRect();
+            let clickX = evt.clientX - rect.left;
+            let clickY = evt.clientY - rect.top;
             
             // CHECK IF WE CLICK ON THE START BUTTON
-            // if(clickX >= startBtn.x && clickX <= startBtn.x + startBtn.w && clickY >= startBtn.y && clickY <= startBtn.y + startBtn.h){
-            //     pipes.reset();
-            //     bird.speedReset();
-            //     score.reset();
-            //     state.current = state.getReady;
-            // }
+            if(clickX >= startBtn.x && clickX <= startBtn.x + startBtn.w && clickY >= startBtn.y && clickY <= startBtn.y + startBtn.h){
+                pipes.reset();
+                bird.speedReset();
+                score.reset();
+                state.current = state.getReady;
+            }
             break;
     }
 });
