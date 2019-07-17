@@ -15,116 +15,32 @@ const state = {
 }
 
 window.onload = () => {
-    console.log("init");
-    // var scale = 'scale('+(screen.width)/320+')';
     var scale = 'scale(2)';
     elcanvas = document.getElementById("bird");
-    elcanvas.style.webkitTransform =  scale;    // Chrome, Opera, Safari
-    elcanvas.style.msTransform =   scale;       // IE 9
+    elcanvas.style.webkitTransform =  scale; 
     elcanvas.style.transform = scale; 
-
-    console.log(scale);
     initializeApp();
 };
-function uiToggleStateButton(pressed) {
-    // const el = document.getElementById("btn-state");
-
-    // if (pressed) {
-    //     el.classList.add("pressed");
-    //     el.innerText = "Pressed";
-    // } else {
-    //     el.classList.remove("pressed");
-    //     el.innerText = "Released";
-    // }
-}
-
-function uiToggleDeviceConnected(connected) {
-    // const elStatus = document.getElementById("status");
-    // const elControls = document.getElementById("controls");
-
-    // elStatus.classList.remove("error");
-
-    if (connected) {
-  
-    //     // Hide loading animation
-    //     uiToggleLoadingAnimation(false);
-    //     // Show status connected
-    //     elStatus.classList.remove("inactive");
-    //     elStatus.classList.add("success");
-    //     elStatus.innerText = "Device connected";
-    //     // Show controls
-    //     elControls.classList.remove("hidden");
-    } else {
-    //     // Show loading animation
-    //     uiToggleLoadingAnimation(true);
-    //     // Show status disconnected
-    //     elStatus.classList.remove("success");
-    //     elStatus.classList.add("inactive");
-    //     elStatus.innerText = "Device disconnected";
-    //     // Hide controls
-    //     elControls.classList.add("hidden");
-    }
-}
-
-function uiToggleLoadingAnimation(isLoading) {
-    // const elLoading = document.getElementById("loading-animation");
-
-    // if (isLoading) {
-    //     // Show loading animation
-    //     elLoading.classList.remove("hidden");
-    // } else {
-    //     // Hide loading animation
-    //     elLoading.classList.add("hidden");
-    // }
-}
-
-function uiStatusError(message, showLoadingAnimation) {
-    // uiToggleLoadingAnimation(showLoadingAnimation);
-
-    // const elStatus = document.getElementById("status");
-    // const elControls = document.getElementById("controls");
-
-    // // Show status error
-    // elStatus.classList.remove("success");
-    // elStatus.classList.remove("inactive");
-    // elStatus.classList.add("error");
-    // elStatus.innerText = message;
-
-    // // Hide controls
-    // elControls.classList.add("hidden");
-}
-
-function makeErrorMsg(errorObj) {
-    return "Error\n" + errorObj.code + "\n" + errorObj.message;
-}
 
 function initializeApp() {
-    console.log("init2");
-    liff.init(() => initializeLiff(), error => uiStatusError(makeErrorMsg(error), false));
+    liff.init(() => initializeLiff(), error => console.log("error"));
 }
 
 function initializeLiff() {
-    console.log("bleinit");
     liff.initPlugins(['bluetooth']).then(() => {
         liffCheckAvailablityAndDo(() => liffRequestDevice());
     }).catch(error => {
-        uiStatusError(makeErrorMsg(error), false);
     });
 }
 
 function liffCheckAvailablityAndDo(callbackIfAvailable) {
-    // Check Bluetooth availability
-    console.log("checking");
     liff.bluetooth.getAvailability().then(isAvailable => {
         if (isAvailable) {
-            uiToggleDeviceConnected(false);
             callbackIfAvailable();
         } else {
-            uiStatusError("Bluetooth not available", true);
             setTimeout(() => liffCheckAvailablityAndDo(callbackIfAvailable), 10000);
         }
     }).catch(error => {
-        uiStatusError(makeErrorMsg(error), false);
     });;
 }
 
@@ -134,55 +50,43 @@ function liffRequestDevice() {
         console.log("connecting");
         liffConnectToDevice(device);
     }).catch(error => {
-        uiStatusError(makeErrorMsg(error), false);
     });
 }
 
 function liffConnectToDevice(device) {
     device.gatt.connect().then(() => {
-        // document.getElementById("device-name").innerText = device.name;
-        // document.getElementById("device-id").innerText = device.id;
         console.log("connected to " + device.name)
-        // Show status connected
-        uiToggleDeviceConnected(true);
 
-        // Get service
         device.gatt.getPrimaryService(USER_SERVICE_UUID).then(service => {
             liffGetUserService(service);
         }).catch(error => {
-            uiStatusError(makeErrorMsg(error), false);
         });
         device.gatt.getPrimaryService(PSDI_SERVICE_UUID).then(service => {
             liffGetPSDIService(service);
         }).catch(error => {
-            uiStatusError(makeErrorMsg(error), false);
         });
 
         // Device disconnect callback
         const disconnectCallback = () => {
-            // Show status disconnected
-            uiToggleDeviceConnected(false);
-
             // Remove disconnect callback
             device.removeEventListener('gattserverdisconnected', disconnectCallback);
 
             // Try to reconnect
             initializeLiff();
         };
-        loop();
+
+        loop(); // Start Game
+
         device.addEventListener('gattserverdisconnected', disconnectCallback);
     }).catch(error => {
-        uiStatusError(makeErrorMsg(error), false);
+
     });
 }
 
 function liffGetUserService(service) {
-    // Button pressed state
-    console.log("gettingchar ")
     service.getCharacteristic(BTN_CHARACTERISTIC_UUID).then(characteristic => {
         liffGetButtonStateCharacteristic(characteristic);
     }).catch(error => {
-        uiStatusError(makeErrorMsg(error), false);
     });
 }
 
@@ -194,9 +98,7 @@ function liffGetPSDIService(service) {
         // Byte array to hex string
         const psdi = new Uint8Array(value.buffer)
             .reduce((output, byte) => output + ("0" + byte.toString(16)).slice(-2), "");
-        document.getElementById("device-psdi").innerText = psdi;
     }).catch(error => {
-        uiStatusError(makeErrorMsg(error), false);
     });
 }
 
@@ -204,7 +106,7 @@ function liffGetButtonStateCharacteristic(characteristic) {
     // Add notification hook for button state
     // (Get notified when button state changes)
     characteristic.startNotifications().then(() => {
-        console.log("subbing ")
+        console.log("Starting Notifications")
         characteristic.addEventListener('characteristicvaluechanged', e => {
             const val = (new Uint8Array(e.target.value.buffer))[0];
             if (val > 0) {
@@ -219,29 +121,16 @@ function liffGetButtonStateCharacteristic(characteristic) {
                             FLAP.play();
                             break;
                         case state.over:
-                            // let rect = cvs.getBoundingClientRect();
-                            // let clickX = evt.clientX - rect.left;
-                            // let clickY = evt.clientY - rect.top;
-                            
-                            // CHECK IF WE CLICK ON THE START BUTTON
-                            // if(clickX >= startBtn.x && clickX <= startBtn.x + startBtn.w && clickY >= startBtn.y && clickY <= startBtn.y + startBtn.h){
-                                pipes.reset();
-                                bird.speedReset();
-                                score.reset();
-                                state.current = state.getReady;
-                            // }
+                            pipes.reset();
+                            bird.speedReset();
+                            score.reset();
+                            state.current = state.getReady;
                             break;
                     }
-                // press
-                uiToggleStateButton(true);
             } else {
-                // release
-                uiToggleStateButton(false);
-                // uiCountPressButton();
             }
         });
     }).catch(error => {
-        uiStatusError(makeErrorMsg(error), false);
     });
 }
 
@@ -273,8 +162,6 @@ SWOOSHING.src = "audio/sfx_swooshing.wav";
 const DIE = new Audio();
 DIE.src = "audio/sfx_die.wav";
 
-
-
 // START BUTTON COORD
 const startBtn = {
     x : 120,
@@ -282,35 +169,6 @@ const startBtn = {
     w : 83,
     h : 29
 }
-
-// CONTROL THE GAME
-cvs.addEventListener("click", function(evt){
-    switch(state.current){
-        case state.getReady:
-            state.current = state.game;
-            SWOOSHING.play();
-            break;
-        case state.game:
-            if(bird.y - bird.radius <= 0) return;
-            bird.flap();
-            FLAP.play();
-            break;
-        case state.over:
-            let rect = cvs.getBoundingClientRect();
-            let clickX = evt.clientX - rect.left;
-            let clickY = evt.clientY - rect.top;
-            
-            // CHECK IF WE CLICK ON THE START BUTTON
-            if(clickX >= startBtn.x && clickX <= startBtn.x + startBtn.w && clickY >= startBtn.y && clickY <= startBtn.y + startBtn.h){
-                pipes.reset();
-                bird.speedReset();
-                score.reset();
-                state.current = state.getReady;
-            }
-            break;
-    }
-});
-
 
 // BACKGROUND
 const bg = {
@@ -326,7 +184,6 @@ const bg = {
         
         ctx.drawImage(sprite, this.sX, this.sY, this.w, this.h, this.x + this.w, this.y, this.w, this.h);
     }
-    
 }
 
 // FOREGROUND
@@ -421,7 +278,6 @@ const bird = {
                 this.rotation = -25 * DEGREE;
             }
         }
-        
     },
     speedReset : function(){
         this.speed = 0;
@@ -459,7 +315,6 @@ const gameOver = {
             ctx.drawImage(sprite, this.sX, this.sY, this.w, this.h, this.x, this.y, this.w, this.h);   
         }
     }
-    
 }
 
 // PIPES
