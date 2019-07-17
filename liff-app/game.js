@@ -15,7 +15,7 @@ const state = {
 }
 
 window.onload = () => {
-    var scale = 'scale(2)';
+    var scale = 'scale(2.5)';
     elcanvas = document.getElementById("bird");
     elcanvas.style.webkitTransform =  scale; 
     elcanvas.style.transform = scale; 
