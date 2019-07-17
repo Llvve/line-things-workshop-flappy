@@ -411,7 +411,7 @@ const pipes = {
     }
     
 }
-
+var rdy2reset = true;
 // SCORE
 const score= {
     best : parseInt(localStorage.getItem("best")) || 0,
@@ -432,17 +432,19 @@ const score= {
             ctx.font = "25px Teko";
             ctx.fillText(this.value, 225, 186);
             ctx.strokeText(this.value, 225, 186);
-            liffWriteScore(parseInt(this.value));
+            if(rdy2reset) liffWriteScore(parseInt(this.value));
             // BEST SCORE
             ctx.fillText(this.best, 225, 228);
             ctx.strokeText(this.best, 225, 228);
-            liffWriteScore(parseInt(this.best));
+            if(rdy2reset) liffWriteScore(parseInt(this.best));
+            rdy2reset = false;
         }
     },
     
     reset : function(){
         this.value = 0;
         liffWriteScore(parseInt(255));
+        rdy2reset = true;
     }
 }
 
