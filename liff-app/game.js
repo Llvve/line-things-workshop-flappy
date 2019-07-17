@@ -16,6 +16,7 @@ const state = {
 
 window.onload = () => {
     console.log("init");
+    document.body.style.zoom = (screen.width/320);
     initializeApp();
 };
 function uiToggleStateButton(pressed) {
