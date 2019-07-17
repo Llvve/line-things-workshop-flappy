@@ -10,7 +10,7 @@ window.onload = () => {
     initializeApp();
 };
 function uiToggleStateButton(pressed) {
-    const el = document.getElementById("btn-state");
+    // const el = document.getElementById("btn-state");
 
     // if (pressed) {
     //     el.classList.add("pressed");
@@ -585,4 +585,4 @@ function loop(){
     
     requestAnimationFrame(loop);
 }
-loop();
+// loop();
