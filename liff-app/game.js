@@ -16,7 +16,7 @@ const state = {
 
 window.onload = () => {
     console.log("init");
-    var scale = 'scale('+(screen.width/320)+')';
+    var scale = 'scale(3)';
     
     document.body.style.webkitTransform =  scale;    // Chrome, Opera, Safari
     document.body.style.msTransform =   scale;       // IE 9
