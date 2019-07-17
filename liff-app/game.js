@@ -27,7 +27,8 @@ function uiToggleDeviceConnected(connected) {
 
     // elStatus.classList.remove("error");
 
-    // if (connected) {
+    if (connected) {
+        loop();
     //     // Hide loading animation
     //     uiToggleLoadingAnimation(false);
     //     // Show status connected
@@ -36,7 +37,7 @@ function uiToggleDeviceConnected(connected) {
     //     elStatus.innerText = "Device connected";
     //     // Show controls
     //     elControls.classList.remove("hidden");
-    // } else {
+    } else {
     //     // Show loading animation
     //     uiToggleLoadingAnimation(true);
     //     // Show status disconnected
@@ -45,7 +46,7 @@ function uiToggleDeviceConnected(connected) {
     //     elStatus.innerText = "Device disconnected";
     //     // Hide controls
     //     elControls.classList.add("hidden");
-    // }
+    }
 }
 
 function uiToggleLoadingAnimation(isLoading) {
