@@ -16,11 +16,13 @@ const state = {
 
 window.onload = () => {
     console.log("init");
-    var scale = 'scale(3)';
-    
-    document.body.style.webkitTransform =  scale;    // Chrome, Opera, Safari
-    document.body.style.msTransform =   scale;       // IE 9
-    document.body.style.transform = scale;   
+    // var scale = 'scale('+(screen.width)/320+')';
+    var scale = 'scale(2)';
+    elcanvas = document.getElementById("bird");
+    elcanvas.style.webkitTransform =  scale;    // Chrome, Opera, Safari
+    elcanvas.style.msTransform =   scale;       // IE 9
+    elcanvas.style.transform = scale; 
+
     console.log(scale);
     initializeApp();
 };
