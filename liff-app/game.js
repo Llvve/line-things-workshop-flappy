@@ -7,6 +7,7 @@ const PSDI_SERVICE_UUID         = 'E625601E-9E55-4597-A598-76018A0D293D'; // Dev
 const PSDI_CHARACTERISTIC_UUID  = '26E2B12B-85F0-4F3F-9FDD-91D114270E6E';
 
 window.onload = () => {
+    console.log("init");
     initializeApp();
 };
 function uiToggleStateButton(pressed) {
@@ -28,7 +29,7 @@ function uiToggleDeviceConnected(connected) {
     // elStatus.classList.remove("error");
 
     if (connected) {
-        loop();
+  
     //     // Hide loading animation
     //     uiToggleLoadingAnimation(false);
     //     // Show status connected
@@ -82,10 +83,12 @@ function makeErrorMsg(errorObj) {
 }
 
 function initializeApp() {
+    console.log("init2");
     liff.init(() => initializeLiff(), error => uiStatusError(makeErrorMsg(error), false));
 }
 
 function initializeLiff() {
+    console.log("bleinit");
     liff.initPlugins(['bluetooth']).then(() => {
         liffCheckAvailablityAndDo(() => liffRequestDevice());
     }).catch(error => {
@@ -95,6 +98,7 @@ function initializeLiff() {
 
 function liffCheckAvailablityAndDo(callbackIfAvailable) {
     // Check Bluetooth availability
+    console.log("checking");
     liff.bluetooth.getAvailability().then(isAvailable => {
         if (isAvailable) {
             uiToggleDeviceConnected(false);
@@ -109,6 +113,7 @@ function liffCheckAvailablityAndDo(callbackIfAvailable) {
 }
 
 function liffRequestDevice() {
+    console.log("requesting");
     liff.bluetooth.requestDevice().then(device => {
         console.log("connecting");
         liffConnectToDevice(device);
@@ -148,7 +153,7 @@ function liffConnectToDevice(device) {
             // Try to reconnect
             initializeLiff();
         };
-
+        loop();
         device.addEventListener('gattserverdisconnected', disconnectCallback);
     }).catch(error => {
         uiStatusError(makeErrorMsg(error), false);
@@ -157,6 +162,7 @@ function liffConnectToDevice(device) {
 
 function liffGetUserService(service) {
     // Button pressed state
+    console.log("gettingchar ")
     service.getCharacteristic(BTN_CHARACTERISTIC_UUID).then(characteristic => {
         liffGetButtonStateCharacteristic(characteristic);
     }).catch(error => {
@@ -182,6 +188,7 @@ function liffGetButtonStateCharacteristic(characteristic) {
     // Add notification hook for button state
     // (Get notified when button state changes)
     characteristic.startNotifications().then(() => {
+        console.log("subbing ")
         characteristic.addEventListener('characteristicvaluechanged', e => {
             const val = (new Uint8Array(e.target.value.buffer))[0];
             if (val > 0) {
