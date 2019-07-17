@@ -15,6 +15,7 @@ const state = {
 }
 
 window.onload = () => {
+    console.log("JS Ver 1")
     var scale = 'scale(2.5)';
     elcanvas = document.getElementById("bird");
     elcanvas.style.webkitTransform =  scale; 
@@ -432,11 +433,11 @@ const score= {
             ctx.font = "25px Teko";
             ctx.fillText(this.value, 225, 186);
             ctx.strokeText(this.value, 225, 186);
-            if(rdy2reset) liffWriteScore(parseInt(this.value));
+            if(rdy2reset) liffWriteScore(0x00+parseInt(this.value));
             // BEST SCORE
             ctx.fillText(this.best, 225, 228);
             ctx.strokeText(this.best, 225, 228);
-            if(rdy2reset) liffWriteScore(parseInt(this.best));
+            if(rdy2reset) liffWriteScore(0x00+parseInt(this.best));
             rdy2reset = false;
         }
     },

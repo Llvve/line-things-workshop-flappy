@@ -187,7 +187,7 @@ void drawchar(char score) {
     display.clearDisplay();
 
     display.setCursor(0, 0);     // Start at top-left corner
-    Serial.println(score);
+    Serial.println((int)score);
     display.print(F("Score: ")); display.println((int)score);
     display.display();
     newDraw = false;
