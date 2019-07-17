@@ -6,6 +6,14 @@ const BTN_CHARACTERISTIC_UUID   = '62FBD229-6EDD-4D1A-B554-5C4E1BB29169';
 const PSDI_SERVICE_UUID         = 'E625601E-9E55-4597-A598-76018A0D293D'; // Device ID
 const PSDI_CHARACTERISTIC_UUID  = '26E2B12B-85F0-4F3F-9FDD-91D114270E6E';
 
+// GAME STATE
+const state = {
+    current : 0,
+    getReady : 0,
+    game : 1,
+    over : 2
+}
+
 window.onload = () => {
     console.log("init");
     initializeApp();
@@ -257,13 +265,7 @@ SWOOSHING.src = "audio/sfx_swooshing.wav";
 const DIE = new Audio();
 DIE.src = "audio/sfx_die.wav";
 
-// GAME STATE
-const state = {
-    current : 0,
-    getReady : 0,
-    game : 1,
-    over : 2
-}
+
 
 // START BUTTON COORD
 const startBtn = {
