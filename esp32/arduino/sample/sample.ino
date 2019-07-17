@@ -185,18 +185,19 @@ void drawchar(char score) {
   display.setTextColor(WHITE); // Draw white text
   if (newDraw) {
     display.clearDisplay();
-
+    
+    display.setTextSize(2);      // Bigger Text Size
+    display.setTextColor(WHITE); // Draw white text
     display.setCursor(0, 0);     // Start at top-left corner
-    Serial.println((int)score);
-    display.print(F("Score: ")); display.println((int)score);
+    display.print(F("Score: ")); // display.println("%d", (int)score);
     display.display();
     newDraw = false;
     }
     else {
-//      display.print(F("Best: ")); display.println(score);
+      display.print(F("Best: ")); display.println(score);
 //    
-//      display.display();
-      newDraw = true;
+      display.display();
+//      newDraw = true;
     }
 }
 
@@ -208,7 +209,6 @@ void playingScreen(void) {
   display.setCursor(0, 0);     // Start at top-left corner
   display.println(F("\n\n\nGame in"));
   display.println(F("Progress"));
-
 
   display.display();
 }

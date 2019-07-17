@@ -412,7 +412,7 @@ const pipes = {
     }
     
 }
-var rdy2reset = true;
+
 // SCORE
 const score= {
     best : parseInt(localStorage.getItem("best")) || 0,
@@ -433,19 +433,16 @@ const score= {
             ctx.font = "25px Teko";
             ctx.fillText(this.value, 225, 186);
             ctx.strokeText(this.value, 225, 186);
-            if(rdy2reset) liffWriteScore(0x00+parseInt(this.value));
+
             // BEST SCORE
             ctx.fillText(this.best, 225, 228);
             ctx.strokeText(this.best, 225, 228);
-            if(rdy2reset) liffWriteScore(0x00+parseInt(this.best));
-            rdy2reset = false;
         }
     },
     
     reset : function(){
+        liffWriteScore(0x00+parseInt(this.value));
         this.value = 0;
-        liffWriteScore(parseInt(255));
-        rdy2reset = true;
     }
 }
 
