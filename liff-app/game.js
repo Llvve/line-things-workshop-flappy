@@ -1,7 +1,7 @@
 // User service UUID: Change this to your generated service UUID
 const USER_SERVICE_UUID         = '61782657-7ffe-4561-a13c-5e96691e2f93';
 const BTN_CHARACTERISTIC_UUID   = '62FBD229-6EDD-4D1A-B554-5C4E1BB29169';
-
+const SCORE_CHARACTERISTIC_UUID   = 'E9062E71-9E62-4BC6-B0D3-35CDCD9B027B';
 // PSDI Service UUID: Fixed value for Developer Trial
 const PSDI_SERVICE_UUID         = 'E625601E-9E55-4597-A598-76018A0D293D'; // Device ID
 const PSDI_CHARACTERISTIC_UUID  = '26E2B12B-85F0-4F3F-9FDD-91D114270E6E';
@@ -61,6 +61,7 @@ function liffConnectToDevice(device) {
             liffGetUserService(service);
         }).catch(error => {
         });
+        
         device.gatt.getPrimaryService(PSDI_SERVICE_UUID).then(service => {
             liffGetPSDIService(service);
         }).catch(error => {
@@ -86,6 +87,11 @@ function liffConnectToDevice(device) {
 function liffGetUserService(service) {
     service.getCharacteristic(BTN_CHARACTERISTIC_UUID).then(characteristic => {
         liffGetButtonStateCharacteristic(characteristic);
+    }).catch(error => {
+    });
+
+    service.getCharacteristic(SCORE_CHARACTERISTIC_UUID).then(characteristic => {
+        window.scoreCharacteristic = characteristic;
     }).catch(error => {
     });
 }
@@ -132,6 +138,15 @@ function liffGetButtonStateCharacteristic(characteristic) {
         });
     }).catch(error => {
     });
+}
+
+function liffWriteScore(sendScore) {
+    if(sendScore < 100){
+        window.scoreCharacteristic.writeValue(
+            new Uint8Array([sendScore])
+        ).catch(error => {
+        });
+    }
 }
 
 // SELECT CVS
@@ -417,14 +432,17 @@ const score= {
             ctx.font = "25px Teko";
             ctx.fillText(this.value, 225, 186);
             ctx.strokeText(this.value, 225, 186);
+            liffWriteScore(parseInt(this.value));
             // BEST SCORE
             ctx.fillText(this.best, 225, 228);
             ctx.strokeText(this.best, 225, 228);
+            liffWriteScore(parseInt(this.best));
         }
     },
     
     reset : function(){
         this.value = 0;
+        liffWriteScore(parseInt(255));
     }
 }
 
