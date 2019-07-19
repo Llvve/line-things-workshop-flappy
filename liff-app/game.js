@@ -52,6 +52,7 @@ function liffRequestDevice() {
         console.log("connecting");
         liffConnectToDevice(device);
     }).catch(error => {
+        console.log("error", error)
     });
 }
 
