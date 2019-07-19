@@ -24,6 +24,7 @@ window.onload = () => {
 };
 
 function initializeApp() {
+    loop();
     liff.init(() => initializeLiff(), error => console.log("error", error));
 }
 
@@ -49,7 +50,6 @@ function liffCheckAvailablityAndDo(callbackIfAvailable) {
 
 function liffRequestDevice() {
     console.log("requesting");
-    console.log("requesting2");
     liff.bluetooth.requestDevice().then(device => {
         console.log("connecting");
         liffConnectToDevice(device);
