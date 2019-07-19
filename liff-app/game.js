@@ -31,6 +31,7 @@ function initializeLiff() {
     liff.initPlugins(['bluetooth']).then(() => {
         liffCheckAvailablityAndDo(() => liffRequestDevice());
     }).catch(error => {
+        console.log("error", error)
     });
 }
 
