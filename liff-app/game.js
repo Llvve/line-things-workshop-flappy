@@ -24,7 +24,6 @@ window.onload = () => {
 };
 
 function initializeApp() {
-    loop();
     liff.init(() => initializeLiff(), error => console.log("error", error));
 }
 
