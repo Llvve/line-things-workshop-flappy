@@ -43,6 +43,7 @@ function liffCheckAvailablityAndDo(callbackIfAvailable) {
             setTimeout(() => liffCheckAvailablityAndDo(callbackIfAvailable), 10000);
         }
     }).catch(error => {
+        console.log("error", error)
     });;
 }
 
